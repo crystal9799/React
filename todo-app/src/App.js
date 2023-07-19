@@ -4,6 +4,7 @@ import TodoInsert from './TodoInsert';
 import TodoList from './TodoList';
 import TodoTemplate from './TodoTemplate';
 
+/*
 const createBulkTodos = () => {
   const array = [];
   for (let i = 1; i < 2500; i++) {
@@ -58,6 +59,20 @@ function App() {
         removeTodo={removeTodo}
         changeChecked={changeChecked}
       />
+    </TodoTemplate>
+  );
+}
+*/
+import useModel from './reducer1/useModel';
+
+function App() {
+  const model = useModel();
+  const { removeTodo, insertTodo, changeChecked } = model;
+
+  return (
+    <TodoTemplate>
+      <TodoInsert insertTodo={insertTodo} />
+      <TodoList model={model} />
     </TodoTemplate>
   );
 }

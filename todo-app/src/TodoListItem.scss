@@ -44,3 +44,12 @@
        border-top: 1px solid black; 
     }
 }
+
+.TodoListItem-virtualized {
+    & + & {
+        border-top: 1px solid black; 
+    }
+    &:nth-child(even) {
+        background: #f8f9fa;
+    }
+}
