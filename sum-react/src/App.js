@@ -13,15 +13,20 @@ function App() {
 
   const onSum = async (e) => {
     //alert("계산요청");
-    const response = await axios.get(
-      "http://localhost:8090/serverSum/api/createId.jsp"
-    );
+    setState({
+      status: -1,
+      result: 0,
+      message: "",
+      uuid: "",
+    });
+
+    const response = await axios.get("http://localhost:8090/api/createId");
     console.log(response.data);
     console.log(response.headers["sessionid"]);
     if (response.data.status === 1) {
       setState({ ...state, uuid: response.data.uuid });
       const response2 = await axios.get(
-        "http://localhost:8090/serverSum/api/sum.jsp?uuid=" + response.data.uuid
+        "http://localhost:8090/api/sum?uuid=" + response.data.uuid
       );
       //console.log(response.data);
       setState(response2.data);
@@ -31,7 +36,7 @@ function App() {
   const onSumCancel = async (e) => {
     //alert("계산취소");
     const response = await axios.get(
-      "http://localhost:8090/serverSum/api/sumCancel.jsp?uuid=" + state.uuid
+      "http://localhost:8090/api/sumCancel?uuid=" + state.uuid
     );
     setState(response.data);
   };

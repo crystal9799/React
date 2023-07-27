@@ -5,7 +5,7 @@ import axios from 'axios';
 import NewsList from './components/NewsList';
 import Categories from './components/Categories';
 import { Route, Routes } from '../node_modules/react-router-dom/dist/index';
-import NewsPage from './components/NewPage';
+import NewsPage from './pages/NewPage';
 /*
 https://jsonplaceholder.typicode.com/todos/1
 */

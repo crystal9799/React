@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from '../../node_modules/react-router-dom/dist/index';
-import Categories from './Categories';
-import NewsList from './NewsList';
+import Categories from '../components/Categories';
+import NewsList from '../components/NewsList';
 
 const NewPage = () => {
   const params = useParams();

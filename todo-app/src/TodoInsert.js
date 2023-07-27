@@ -3,6 +3,7 @@ import { MdAdd } from 'react-icons/md';
 import './TodoInsert.scss';
 
 const TodoInsert = ({ insertTodo }) => {
+  
   const [value, setValue] = useState('');
   const inputBox = useRef();
 

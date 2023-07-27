@@ -64,6 +64,12 @@ function App() {
 }
 */
 import useModel from './reducer1/useModel';
+//import ContextApp from './context/ContextApp';
+
+/*
+ModelContext
+
+*/
 
 function App() {
   const model = useModel();

@@ -1,99 +1,106 @@
-import React, { useCallback, useReducer, useRef } from 'react';
+import React, { useCallback, useEffect, useReducer, useRef } from 'react';
+import axios from 'axios';
 
-const createBulkTodos = () => {
-  const array = [];
-  for (let i = 1; i < 2500; i++) {
-    array.push({
-      id: i,
-      checked: i % 3 === 0,
-      title: '리엑트의 기초 알아보기 할일 ' + i,
-    });
-  }
-  return array;
-};
-
-const reducerTodo = (state, action) => {
+const reducerTodo = (todos, action) => {
   switch (action.type) {
+    case 'ALL_LIST_TODO':
+      return action.todos;
     case 'ADD_TODO':
-      return state.concat(action.todo);
+      return todos.concat(action.todo);
     case 'REMOVE_TODO':
-      return state.filter((todo) => todo.id !== action.id);
+      return todos.filter((todo) => todo.id !== action.id);
     case 'TOGGLE_CHECKED':
-      //   return state.map((todo) =>
-      //     todo.id === action.id ? { ...todo, checked: !todo.checked } : todo,
-      //   );
-
-      const todos = state;
-      console.time('check');
-      let left = 0;
-      let right = todos.length - 1;
-      let targetIndex = -1;
-      while (left <= right) {
-        let index = Math.floor((left + right) / 2);
-        if (todos[index].id === action.id) {
-          targetIndex = index;
-          break;
-        } else if (todos[index].id > action.id) {
-          right = index - 1;
-        } else left = index + 1;
-      }
-      todos[targetIndex].checked = !todos[targetIndex].checked;
-      console.timeEnd('check');
-      return [...todos];
-
-    //   return todos.map((item) =>
-    //     item.id === action.id ? { ...item, checked: !item.checked } : item,
-    //   );
-    //      이진탐색
-    //   let left = 0;
-    //   let right = todos.length - 1;
-    //   let targetIndex = -1;
-    //   while (left <= right) {
-    //     let index = Math.floor((left + right) / 2);
-    //     if (todos[index].id === action.id) {
-    //       targetIndex = index;
-    //       break;
-    //     } else if (todos[index].id > action.id) {
-    //       right = index - 1;
-    //     } else left = index + 1;
-    //   }
-    //   todos[targetIndex].checked = !todos[targetIndex].checked;
-    //   return [...todos];
-
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, checked: !todo.checked } : todo,
+      );
     default:
-      return state;
+      return todos;
   }
 };
 
 function useModel() {
-  const [todos, dispatch] = useReducer(reducerTodo, createBulkTodos());
+  const [todos, dispatch] = useReducer(reducerTodo, []);
   const nextId = useRef(todos.length + 1);
 
-  console.log('aaaaaaaaaaaaaaaaaaaa');
+  console.log('todos.length->' + todos.length);
+  useEffect(() => {
+    todoList();
+  }, []);
+
+  const todoList = () => {
+    axios.get('/todoList').then((response) => {
+      dispatch({
+        type: 'ALL_LIST_TODO',
+        todos: response.data,
+      });
+    });
+  };
 
   const insertTodo = useCallback((value) => {
-    dispatch({
-      type: 'ADD_TODO',
-      todo: {
-        id: nextId.current++,
-        checked: false,
-        title: value,
-      },
-    });
+    axios
+      .post(
+        '/insert',
+        {
+          checked: false,
+          title: value,
+        },
+        {
+          headers: { 'Content-type': 'application/json' },
+        },
+      )
+      .then((response) => {
+        dispatch({
+          type: 'ADD_TODO',
+          todo: {
+            id: response.data,
+            checked: false,
+            title: value,
+          },
+        });
+      });
   }, []);
 
   const removeTodo = useCallback((id) => {
-    dispatch({
-      type: 'REMOVE_TODO',
-      id: id,
-    });
+    axios
+      .post(
+        '/delete',
+        {
+          id: id,
+        },
+        {
+          headers: { 'Content-type': 'application/json' },
+        },
+      )
+      .then((response) => {
+        if (parseInt(response.data) === 1) {
+          dispatch({
+            type: 'REMOVE_TODO',
+            id: id,
+          });
+        }
+      });
   }, []);
 
-  const changeChecked = useCallback((id) => {
-    dispatch({
-      type: 'TOGGLE_CHECKED',
-      id: id,
-    });
+  const changeChecked = useCallback((id, checked) => {
+    axios
+      .post(
+        '/update',
+        {
+          id: id,
+          checked_yn: checked ? 'N' : 'Y',
+        },
+        {
+          headers: { 'Content-type': 'application/json' },
+        },
+      )
+      .then((response) => {
+        if (parseInt(response.data) === 1) {
+          dispatch({
+            type: 'TOGGLE_CHECKED',
+            id: id,
+          });
+        }
+      });
   }, []);
 
   return { todos, removeTodo, insertTodo, changeChecked };

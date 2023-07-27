@@ -43,7 +43,6 @@ const CategoriesBlock = styled.div`
     overflow-x: auto;
   }
 `;
-
 const Category = styled(NavLink)`
   font-size: 1.125rem;
   cursor: pointer;
@@ -56,7 +55,7 @@ const Category = styled(NavLink)`
     color: #495057;
   }
 
-  ${(props) =>
+  /* ${(props) =>
     props.active &&
     css`
       font-weight: 600;
@@ -65,7 +64,7 @@ const Category = styled(NavLink)`
       &:hover {
         color: #3bc9db;
       }
-    `}
+    `} */
 
   & + & {
     margin-left: 1rem;

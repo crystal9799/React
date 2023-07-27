@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import NewsItems from './NewsItems';
-import axios from '../../node_modules/axios/index';
-import usePromise from './usePromise';
+import axios from 'axios';
+import usePromise from '../lib/usePromise';
 
 const NewsListBlock = styled.div`
   box-sizing: border-box;
@@ -18,7 +18,7 @@ const NewsListBlock = styled.div`
 `;
 
 const NewsList = ({ category }) => {
-  //상태 변수로 관리 ( 목록, 로딩중 )
+  //상태 변수로 관리 (목록, 로딩중)
   //1. 서버에서 자료를 로딩한다 -> 비동기
   //2. 서버에 요청한 자료가 로딩중 일때는 화면에 로딩중 ...
   //3. 서버에 요청한 자료가 로딩 완료되면 출력
@@ -29,21 +29,43 @@ const NewsList = ({ category }) => {
     );
   }, [category]);
 
+  //  const [articles, setArticles] = useState(null); //[article, article, article, article];
+  //const [loading, setLoading] = useState(false);
+
+  // const fetchData = useCallback(async () => {
+  //   const query = category === "all" ? "" : `&category=${category}`;
+  //   const response = await axios.get(
+  //     `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=ae3df86896064a709c97f5898afccbc5`
+  //   );
+  //   setArticles(response.data.articles);
+  //   //서버에 요청한 자료가 로딩 완료되면 완료 설정
+  //   setLoading(false);
+  // }, [category]);
+
+  // useEffect(() => {
+  //   try {
+  //     setLoading(true);
+
+  //     fetchData();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }, [category]);
+
   if (loading) {
-    return <NewsListBlock>대기중 ...</NewsListBlock>;
+    return <NewsListBlock>서버에서 뉴스 로딩중 ...</NewsListBlock>;
   }
 
-  //아직 response 값이 설정되지 않았을 때
   if (!response) {
-    return null;
-  }
-  //에러가 발생했을 때
-  if (error) {
-    return <NewsListBlock>에러 발생!</NewsListBlock>;
+    return <NewsListBlock>서버에서 뉴스가 없습니다</NewsListBlock>;
   }
 
-  //response 값이 유효할 때
+  if (error) {
+    return <NewsListBlock>에러 발생</NewsListBlock>;
+  }
+
   const { articles } = response.data;
+
   return (
     <NewsListBlock>
       {articles.map((article) => (
